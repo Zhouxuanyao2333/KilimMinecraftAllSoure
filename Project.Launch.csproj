@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- ★★★ 新增：指定应用程序图标（任务栏显示） ★★★ -->
+    <ApplicationIcon>src\Views\imgs\MainLogo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- NuGet 包 -->
+    <PackageReference Include="Avalonia" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 你的文件 -->
+    <AvaloniaXaml Update="App.axaml" />
+    <AvaloniaXaml Update="src\Views\MainWindow.axaml" />
+    <AvaloniaResource Include="src\Views\Styles.axaml" />
+    <AvaloniaResource Include="src\Views\imgs\blackx.png" />
+    <AvaloniaResource Include="src\Views\imgs\black-.png" />
+    <AvaloniaResource Include="src\Views\imgs\whitex.png" />
+    <AvaloniaResource Include="src\Views\imgs\white-.png" />
+    <AvaloniaResource Include="src\Views\imgs\button-Start1.png" />
+    <AvaloniaResource Include="src\Views\imgs\button-Start2.png" />
+    <AvaloniaResource Include="src\Views\imgs\button-Start3.png" />
+    <AvaloniaResource Include="src\Views\imgs\button-Start4.png" />
+    <AvaloniaResource Include="src\Views\imgs\github.png" />
+    <AvaloniaResource Include="src\Views\imgs\show.png" />
+    <!-- ★★★ 新增：显式将 .ico 文件作为内容包含（非必须，但推荐，方便复制到输出目录） ★★★ -->
+    <Content Include="src\Views\imgs\MainLogo.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    
+    <Compile Update="src\Views\MainWindow.cs">
+      <DependentUpon>MainWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="src\ViewModel\TestWindowButton.cs" />
+    <Compile Update="App.axaml.cs" />
+  </ItemGroup>
+</Project>

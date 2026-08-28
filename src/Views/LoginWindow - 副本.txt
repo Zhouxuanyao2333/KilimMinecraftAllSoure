@@ -1,0 +1,182 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia.Base"
+        xmlns:avalonia="using:Avalonia.Controls"
+        x:Class="Project.Launch.Views.LoginWindow"
+        Title="登录"
+        Width="800" Height="440"
+        WindowDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        CanResize="False"
+        Background="Transparent"
+        TransparencyLevelHint="AcrylicBlur"
+        avalonia:Win32Properties.WindowCornerPreference="Round">
+
+    <Border CornerRadius="12" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 主内容区域 -->
+            <StackPanel Grid.Row="0"
+                        Margin="30,30,30,15"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Spacing="15">
+
+                <TextBlock Text="登录 Kilim Launcher"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#333"
+                           HorizontalAlignment="Center" />
+
+                <TextBlock Text="选择登录方式"
+                           FontSize="13"
+                           Foreground="#666"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,5" />
+
+                <StackPanel Orientation="Horizontal" Spacing="8"
+                            HorizontalAlignment="Center">
+                    <TextBox x:Name="PlayerNameBox"
+                             Width="170"
+                             Height="32"
+                             PlaceholderText="输入正版 ID" />
+                    <Button x:Name="FetchSkinButton"
+                            Content="获取皮肤"
+                            Height="32"
+                            Padding="12,0"
+                            Background="#6C63FF"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand">
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#A8C8FF" />
+                                <Setter Property="TextBlock.Foreground" Value="#2C3E50" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+                </StackPanel>
+
+                <TextBlock Text="或上传本地皮肤文件"
+                           FontSize="12"
+                           Foreground="#888"
+                           HorizontalAlignment="Center" />
+
+                <Button x:Name="SelectLocalSkinButton"
+                        Content="选择本地皮肤文件"
+                        Height="32"
+                        Padding="14,0"
+                        Background="#6C63FF"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        HorizontalAlignment="Center">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#A8C8FF" />
+                            <Setter Property="TextBlock.Foreground" Value="#2C3E50" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+
+                <!-- 头像预览 -->
+                <Grid Width="72" Height="72"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Margin="0,5,0,5">
+                    <Image x:Name="LoginFaceImage"
+                           Stretch="Uniform"
+                           Width="72" Height="72"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           media:RenderOptions.BitmapInterpolationMode="None" />
+                    <Image x:Name="LoginHatImage"
+                           Stretch="Uniform"
+                           Width="72" Height="72"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Margin="-2,-2,-2,-2"
+                           media:RenderOptions.BitmapInterpolationMode="None" />
+                    <Rectangle Width="72" Height="72"
+                               Stroke="#DDD"
+                               StrokeThickness="2"
+                               IsHitTestVisible="False"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+
+                <Button x:Name="LoginButton"
+                        Content="确认登录"
+                        Width="130"
+                        Height="34"
+                        Background="#6C63FF"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        HorizontalAlignment="Center">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#A8C8FF" />
+                            <Setter Property="TextBlock.Foreground" Value="#2C3E50" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+
+                <TextBlock x:Name="LoginStatus"
+                           FontSize="12"
+                           Foreground="#888"
+                           HorizontalAlignment="Center"
+                           Text="输入ID或选择文件后登录"
+                           Margin="0,5,0,0" />
+            </StackPanel>
+
+            <!-- 底部区域 -->
+            <Border Grid.Row="1"
+                    Height="44"
+                    Background="#F5F5F5"
+                    CornerRadius="0,0,12,12">
+                <DockPanel Margin="15,0,15,0">
+
+                    <TextBlock DockPanel.Dock="Left"
+                               Text="v0.2.0 · Erics"
+                               FontSize="11"
+                               Foreground="#999"
+                               VerticalAlignment="Center" />
+
+                    <StackPanel DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Spacing="8">
+
+                        <!-- ★ GitHub 按钮：添加 ToolTip ★ -->
+                        <Button x:Name="GitHubButton"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Padding="0"
+                                Width="44"
+                                Height="44"
+                                ToolTip.Tip="点击即访问仓库">   <!-- 添加这一行 -->
+                            <Image Source="avares://Project.Launch/src/Views/imgs/github.png"
+                                   Width="36"
+                                   Height="36"
+                                   Stretch="Uniform" />
+                        </Button>
+
+                        <TextBlock Text="请更换仓库不要露全部代码"
+                                   FontSize="9"
+                                   Foreground="#CC5555"
+                                   VerticalAlignment="Center"
+                                   Opacity="0.7" />
+                    </StackPanel>
+
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,183 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia.Base"
+        xmlns:avalonia="using:Avalonia.Controls"
+        x:Class="Project.Launch.Views.LoginWindow"
+        Title="登录"
+        Width="800" Height="440"
+        WindowDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        CanResize="False"
+        Background="Transparent"
+        TransparencyLevelHint="AcrylicBlur"
+        avalonia:Win32Properties.WindowCornerPreference="Round">
+
+    <Border CornerRadius="12" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="30,30,30,15">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Spacing="15">
+
+                    <!-- 标题 + 选择器容器 -->
+                    <Border x:Name="TitleContainer"
+                            HorizontalAlignment="Center"
+                            Opacity="1">
+                        <Border.RenderTransform>
+                            <TranslateTransform Y="-10" />
+                        </Border.RenderTransform>
+                        <Border.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity"
+                                                  Duration="0:0:0.3">
+                                    <DoubleTransition.Easing>
+                                        <CubicEaseInOut />
+                                    </DoubleTransition.Easing>
+                                </DoubleTransition>
+                            </Transitions>
+                        </Border.Transitions>
+
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="登录 Kilim Minecraft Launcher"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="#333"
+                                       HorizontalAlignment="Center" />
+
+                            <Grid Margin="0,10,0,0" Width="360" Height="44">
+                                <Border Background="#444444" CornerRadius="8" />
+                                <Grid ColumnDefinitions="*, *, *">
+                                    <Button x:Name="OfflineLoginButton"
+                                            Grid.Column="0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="#AAAAAA"
+                                            FontWeight="SemiBold"
+                                            Content="离线登录"
+                                            Cursor="Hand"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Padding="0" />
+                                    <Button x:Name="OnlineLoginButton"
+                                            Grid.Column="1"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="#AAAAAA"
+                                            FontWeight="SemiBold"
+                                            Content="正版登录"
+                                            Cursor="Hand"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Padding="0" />
+                                    <Button x:Name="ThirdPartyLoginButton"
+                                            Grid.Column="2"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="#AAAAAA"
+                                            FontWeight="SemiBold"
+                                            Content="第三方登录"
+                                            Cursor="Hand"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Padding="0" />
+                                </Grid>
+                                <Border x:Name="LoginModeSlider"
+                                        Width="114"
+                                        Height="36"
+                                        Background="White"
+                                        CornerRadius="6"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        Margin="3,0,3,0"
+                                        Opacity="0.85" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 输入面板 -->
+                    <Border x:Name="InputPanel"
+                            HorizontalAlignment="Center"
+                            Opacity="1">
+                        <Border.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity"
+                                                  Duration="0:0:0.3">
+                                    <DoubleTransition.Easing>
+                                        <CubicEaseInOut />
+                                    </DoubleTransition.Easing>
+                                </DoubleTransition>
+                            </Transitions>
+                        </Border.Transitions>
+
+                        <StackPanel HorizontalAlignment="Center" Spacing="8">
+                            <TextBlock x:Name="ModeLabel"
+                                       Text="选择登录方式"
+                                       FontSize="13"
+                                       Foreground="#666"
+                                       HorizontalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8"
+                                        HorizontalAlignment="Center">
+                                <TextBox x:Name="PlayerNameBox"
+                                         Width="200"
+                                         Height="32"
+                                         PlaceholderText="输入正版 ID"
+                                         VerticalContentAlignment="Center" />
+                                <Button x:Name="FetchSkinButton"
+                                        Classes="Miret"
+                                        Content="获取皮肤"
+                                        Height="32"
+                                        Padding="12,0" />
+                            </StackPanel>
+                            <TextBlock x:Name="LocalFileLabel"
+                                       Text="或上传本地皮肤文件"
+                                       FontSize="12"
+                                       Foreground="#888"
+                                       HorizontalAlignment="Center" />
+                            <Button x:Name="SelectLocalSkinButton"
+                                    Classes="Miret"
+                                    Content="选择本地皮肤文件"
+                                    Height="32"
+                                    Padding="14,0"
+                                    HorizontalAlignment="Center" />
+                            <Button x:Name="LoginButton"
+                                    Classes="Miret"
+                                    Content="确认登录"
+                                    Width="130"
+                                    Height="34"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,5,0,0"
+                                    Click="OnLoginClicked" />
+                            <TextBlock x:Name="LoginStatus"
+                                       FontSize="12"
+                                       Foreground="#888"
+                                       HorizontalAlignment="Center"
+                                       Text="输入ID或选择文件后登录" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="1"
+                    Height="44"
+                    Background="#F5F5F5"
+                    CornerRadius="0,0,12,12">
+                <DockPanel Margin="15,0,15,0">
+                    <TextBlock DockPanel.Dock="Left" Text="v0.2.1 · Erics" FontSize="11" Foreground="#999" VerticalAlignment="Center" />
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
+                        <Button x:Name="GitHubButton" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Width="44" Height="44" ToolTip.Tip="点击即访问仓库">
+                            <Image Source="avares://Project.Launch/src/Views/imgs/github.png" Width="36" Height="36" Stretch="Uniform" />
+                        </Button>
+                        <TextBlock Text="请更换仓库不要露全部代码" FontSize="9" Foreground="#CC5555" VerticalAlignment="Center" Opacity="0.7" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

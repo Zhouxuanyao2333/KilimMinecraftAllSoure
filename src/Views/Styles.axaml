@@ -1,0 +1,107 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:media="using:Avalonia.Media">
+    
+    <Styles.Resources>
+        <!-- 主题色 -->
+        <Color x:Key="MiretPrimaryColor">#D969CE</Color>
+        <Color x:Key="MiretHoverColor">#E88ADB</Color>
+        <Color x:Key="MiretPressedColor">#C24AB5</Color>
+        
+        <!-- 半透明刷子（模拟亚克力质感） -->
+        <SolidColorBrush x:Key="MiretAcrylicBrush" 
+                         Color="{StaticResource MiretPrimaryColor}" 
+                         Opacity="0.55" />
+        <SolidColorBrush x:Key="MiretAcrylicHoverBrush" 
+                         Color="{StaticResource MiretHoverColor}" 
+                         Opacity="0.7" />
+        <SolidColorBrush x:Key="MiretAcrylicPressedBrush" 
+                         Color="{StaticResource MiretPressedColor}" 
+                         Opacity="0.85" />
+    </Styles.Resources>
+
+    <!-- ======================== -->
+    <!-- 实体按钮（保留） -->
+    <!-- ======================== -->
+    <Style Selector="Button.Miret">
+        <Setter Property="ClipToBounds" Value="False" />
+        <Setter Property="Background" Value="{StaticResource MiretPrimaryColor}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="14,6" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <media:DropShadowEffect BlurRadius="6" OffsetX="3" OffsetY="3" Color="#66000000" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Setter.Value>
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15" />
+                </Transitions>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.Miret:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource MiretHoverColor}" />
+        <Setter Property="TextBlock.Foreground" Value="White" />
+    </Style>
+
+    <Style Selector="Button.Miret:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource MiretPressedColor}" />
+    </Style>
+
+    <!-- ======================== -->
+    <!-- 亚克力透明按钮（新） -->
+    <!-- ======================== -->
+    <Style Selector="Button.MiretAcrylic">
+        <Setter Property="ClipToBounds" Value="False" />
+        <!-- 半透明背景 -->
+        <Setter Property="Background" Value="{StaticResource MiretAcrylicBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <!-- 半透明白色边框，增强玻璃感 -->
+        <Setter Property="BorderBrush" Value="#55FFFFFF" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="14,6" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <media:DropShadowEffect BlurRadius="8" OffsetX="3" OffsetY="4" Color="#44000000" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Setter.Value>
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.MiretAcrylic:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource MiretAcrylicHoverBrush}" />
+        <Setter Property="TextBlock.Foreground" Value="White" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <media:DropShadowEffect BlurRadius="12" OffsetX="4" OffsetY="6" Color="#66000000" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.MiretAcrylic:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource MiretAcrylicPressedBrush}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <media:DropShadowEffect BlurRadius="4" OffsetX="1" OffsetY="2" Color="#44000000" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+</Styles>
