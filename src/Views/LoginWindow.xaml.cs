@@ -15,6 +15,7 @@ using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.Interactivity;
+using Fluid.Avalonia.Acrylic;
 using Project.Launch;
 using Project.Launch.Tools;
 
@@ -31,7 +32,7 @@ namespace Project.Launch.Views
         private Button? _offlineBtn;
         private Button? _onlineBtn;
         private Button? _thirdPartyBtn;
-        private Border? _slider;
+        private AcrylicInteractiveSurface? _slider;
         private TranslateTransform? _sliderTransform;
         private int _selectedIndex = 1;
 
@@ -88,14 +89,9 @@ namespace Project.Launch.Views
                     _titleContainer.RenderTransform = _titleTransform;
                 }
                 _titleTransform.Y = OFFSET_ONLINE;
-                _titleContainer.Opacity = 1;
             }
 
             _inputPanel = this.FindControl<Border>("InputPanel");
-            if (_inputPanel != null)
-            {
-                _inputPanel.Opacity = 1;
-            }
 
             UpdateModeUI(1);
             SetDefaultSteveSkin();
@@ -118,7 +114,7 @@ namespace Project.Launch.Views
             _onlineBtn = this.FindControl<Button>("OnlineLoginButton");
             _thirdPartyBtn = this.FindControl<Button>("ThirdPartyLoginButton");
 
-            _slider = this.FindControl<Border>("LoginModeSlider");
+            _slider = this.FindControl<AcrylicInteractiveSurface>("LoginModeSlider");
             if (_slider != null)
             {
                 _sliderTransform = new TranslateTransform();
@@ -133,19 +129,21 @@ namespace Project.Launch.Views
             UpdateButtonColors(1);
         }
 
+        // ★ 只对输入面板做淡出淡入，标题完全不动
         private void UpdateModeUI(int index)
         {
             if (_playerNameBox == null || _loginButton == null) return;
 
-            if (_titleContainer != null)
-                _titleContainer.Opacity = 0;
+            // 1. 淡出输入面板
             if (_inputPanel != null)
                 _inputPanel.Opacity = 0;
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                await Task.Delay(300);
+                // 2. 等淡出完成
+                await Task.Delay(250);
 
+                // 3. 切换内容
                 switch (index)
                 {
                     case 0:
@@ -186,8 +184,7 @@ namespace Project.Launch.Views
                         break;
                 }
 
-                if (_titleContainer != null)
-                    _titleContainer.Opacity = 1;
+                // 4. 淡入输入面板
                 if (_inputPanel != null)
                     _inputPanel.Opacity = 1;
             });
@@ -242,13 +239,11 @@ namespace Project.Launch.Views
                 if (buttons[i] != null)
                 {
                     buttons[i]!.Foreground = (i == selectedIndex)
-                        ? new SolidColorBrush(Colors.White)
-                        : new SolidColorBrush(Color.Parse("#AAAAAA"));
+                        ? new SolidColorBrush(Colors.Black)
+                        : new SolidColorBrush(Color.Parse("#666666"));
                 }
             }
         }
-
-        // ========== 事件处理方法 ==========
 
         private async void OnGitHubClicked(object? sender, EventArgs e)
         {
@@ -358,7 +353,7 @@ namespace Project.Launch.Views
 
         public void OnLoginClicked(object sender, RoutedEventArgs e)
         {
-            if (_selectedIndex == 0) // 离线登录
+            if (_selectedIndex == 0)
             {
                 if (_playerNameBox == null || string.IsNullOrWhiteSpace(_playerNameBox.Text))
                 {
@@ -385,7 +380,6 @@ namespace Project.Launch.Views
                     };
                     string accountId = $"offline_{username}";
                     AccountService.SetSelectedAccount(accountId, account);
-
                     AccountService.SetLoginCheck(true);
 
                     Close(true);
@@ -396,7 +390,7 @@ namespace Project.Launch.Views
                         _loginStatus.Text = $"❌ 保存账户失败: {ex.Message}";
                 }
             }
-            else if (_selectedIndex == 1) // 正版登录
+            else if (_selectedIndex == 1)
             {
                 if (FaceBitmap == null || HatBitmap == null)
                     SetDefaultSteveSkin();
@@ -407,7 +401,7 @@ namespace Project.Launch.Views
                     App.PlayerName = PlayerName;
                 Close(true);
             }
-            else // 第三方
+            else
             {
                 if (_loginStatus != null) _loginStatus.Text = "❌ 第三方登录暂未实现";
             }
@@ -497,11 +491,9 @@ namespace Project.Launch.Views
             {
                 return (null, null);
             }
-            return (null, null);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "CA1822")]
         private async Task<(Bitmap? face, Bitmap? hat)> FetchSkinFromMojangAsync(string username)
         {
             try
@@ -554,7 +546,6 @@ namespace Project.Launch.Views
             {
                 return (null, null);
             }
-            return (null, null);
         }
 
         private void Close(bool isLogin) => Close();

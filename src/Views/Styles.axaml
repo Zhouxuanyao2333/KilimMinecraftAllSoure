@@ -8,7 +8,7 @@
         <Color x:Key="MiretHoverColor">#E88ADB</Color>
         <Color x:Key="MiretPressedColor">#C24AB5</Color>
         
-        <!-- 半透明刷子（模拟亚克力质感） -->
+        <!-- Miret 半透明刷子 -->
         <SolidColorBrush x:Key="MiretAcrylicBrush" 
                          Color="{StaticResource MiretPrimaryColor}" 
                          Opacity="0.55" />
@@ -18,11 +18,42 @@
         <SolidColorBrush x:Key="MiretAcrylicPressedBrush" 
                          Color="{StaticResource MiretPressedColor}" 
                          Opacity="0.85" />
+
+        <!-- Lar-Miret 亚克力刷（更浅、更透） -->
+        <SolidColorBrush x:Key="LarMiretBrush" 
+                         Color="{StaticResource MiretPrimaryColor}" 
+                         Opacity="0.35" />
+        <SolidColorBrush x:Key="LarMiretHoverBrush" 
+                         Color="{StaticResource MiretHoverColor}" 
+                         Opacity="0.5" />
+        <SolidColorBrush x:Key="LarMiretPressedBrush" 
+                         Color="{StaticResource MiretPressedColor}" 
+                         Opacity="0.6" />
+
+        <!-- Lar-Miret 阴影 -->
+        <media:DropShadowEffect x:Key="LarMiretShadow"
+                                BlurRadius="12"
+                                OffsetX="0"
+                                OffsetY="6"
+                                Color="#44000000" />
+        <media:DropShadowEffect x:Key="LarMiretHoverShadow"
+                                BlurRadius="16"
+                                OffsetX="0"
+                                OffsetY="8"
+                                Color="#66000000" />
+
+        <!-- 左上角高光渐变 -->
+        <LinearGradientBrush x:Key="LarMiretHighlight"
+                             StartPoint="0,0"
+                             EndPoint="1,1">
+            <GradientStop Color="#80FFFFFF" Offset="0.0" />
+            <GradientStop Color="#00FFFFFF" Offset="0.6" />
+        </LinearGradientBrush>
     </Styles.Resources>
 
-    <!-- ======================== -->
-    <!-- 实体按钮（保留） -->
-    <!-- ======================== -->
+    <!-- ================================================== -->
+    <!-- Miret 标准按钮 -->
+    <!-- ================================================== -->
     <Style Selector="Button.Miret">
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="Background" Value="{StaticResource MiretPrimaryColor}" />
@@ -33,11 +64,6 @@
         <Setter Property="Padding" Value="14,6" />
         <Setter Property="MinHeight" Value="32" />
         <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <media:DropShadowEffect BlurRadius="6" OffsetX="3" OffsetY="3" Color="#66000000" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Transitions">
             <Setter.Value>
                 <Transitions>
@@ -56,15 +82,13 @@
         <Setter Property="Background" Value="{StaticResource MiretPressedColor}" />
     </Style>
 
-    <!-- ======================== -->
-    <!-- 亚克力透明按钮（新） -->
-    <!-- ======================== -->
+    <!-- ================================================== -->
+    <!-- Miret 亚克力按钮 -->
+    <!-- ================================================== -->
     <Style Selector="Button.MiretAcrylic">
         <Setter Property="ClipToBounds" Value="False" />
-        <!-- 半透明背景 -->
         <Setter Property="Background" Value="{StaticResource MiretAcrylicBrush}" />
         <Setter Property="Foreground" Value="White" />
-        <!-- 半透明白色边框，增强玻璃感 -->
         <Setter Property="BorderBrush" Value="#55FFFFFF" />
         <Setter Property="BorderThickness" Value="1.5" />
         <Setter Property="Cursor" Value="Hand" />
@@ -103,5 +127,66 @@
                 <media:DropShadowEffect BlurRadius="4" OffsetX="1" OffsetY="2" Color="#44000000" />
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- ================================================== -->
+    <!-- Lar-Miret 大按钮 -->
+    <!-- ================================================== -->
+    <Style Selector="Button.LarMiret">
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="Background" Value="{StaticResource LarMiretBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderBrush" Value="#44FFFFFF" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="Padding" Value="20,8" />
+        <Setter Property="MinHeight" Value="72" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Effect" Value="{StaticResource LarMiretShadow}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                        <Border Background="{StaticResource LarMiretHighlight}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Setter.Value>
+                <Transitions>
+                    <!-- ★ 只保留 Background 的过渡，Effect 不能使用 BrushTransition -->
+                    <BrushTransition Property="Background" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Lar-Miret 悬停 -->
+    <Style Selector="Button.LarMiret:pointerover">
+        <Setter Property="Background" Value="{StaticResource LarMiretHoverBrush}" />
+        <Setter Property="Effect" Value="{StaticResource LarMiretHoverShadow}" />
+    </Style>
+
+    <!-- Lar-Miret 按下 -->
+    <Style Selector="Button.LarMiret:pressed">
+        <Setter Property="Background" Value="{StaticResource LarMiretPressedBrush}" />
+        <Setter Property="Effect" Value="{StaticResource LarMiretShadow}" />
+    </Style>
+
+    <!-- Lar-Miret 内文字样式 -->
+    <Style Selector="Button.LarMiret TextBlock">
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="White" />
     </Style>
 </Styles>

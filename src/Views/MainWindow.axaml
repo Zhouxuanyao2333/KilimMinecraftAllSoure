@@ -12,7 +12,7 @@
         TransparencyLevelHint="AcrylicBlur"
         avalonia:Win32Properties.WindowCornerPreference="Round">
 
-    <Grid Background="#CCFFFFFF">
+    <Grid Background="#AAFFFFFF">
         <Border x:Name="Overlay"
                 Background="#80000000"
                 IsVisible="False"
@@ -23,7 +23,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- 标题栏 -->
+        <!-- ★ 标题栏：加上 Background 的 BrushTransition -->
         <Border Grid.Row="0"
                 x:Name="TitleBarBorder"
                 PointerPressed="TitleBar_PointerPressed"
@@ -34,14 +34,29 @@
                     <GradientStop Color="#CCB366FF" Offset="1.0"/>
                 </LinearGradientBrush>
             </Border.Background>
+            <Border.Transitions>
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.4" />
+                </Transitions>
+            </Border.Transitions>
+
             <Grid ColumnDefinitions="*, Auto, Auto">
+                <!-- ★ 标题文字：加上 Foreground 的 BrushTransition -->
                 <TextBlock Grid.Column="0"
                            x:Name="TitleText"
                            Text="Kilim Minecraft Launcher"
                            FontSize="16"
                            Foreground="White"
                            VerticalAlignment="Center"
-                           Margin="10,0,0,0" />
+                           Margin="10,0,0,0">
+                    <TextBlock.Transitions>
+                        <Transitions>
+                            <BrushTransition Property="Foreground" Duration="0:0:0.4" />
+                        </Transitions>
+                    </TextBlock.Transitions>
+                </TextBlock>
+
+                <!-- 最小化按钮 -->
                 <Button Grid.Column="1"
                         x:Name="MinimizeButton"
                         Background="Transparent"
@@ -49,10 +64,19 @@
                         Width="45" Height="35"
                         Cursor="Hand">
                     <Image x:Name="MinimizeImage"
-                           Source="avares://Project.Launch/src/Views/imgs/black-.png"
+                           Source="avares://Project.Launch/src/Views/imgs/white-.png"
                            Width="20" Height="26" Stretch="Fill"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Opacity="1">
+                        <Image.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                            </Transitions>
+                        </Image.Transitions>
+                    </Image>
                 </Button>
+
+                <!-- 关闭按钮 -->
                 <Button Grid.Column="2"
                         x:Name="CloseButton"
                         Background="Transparent"
@@ -61,16 +85,22 @@
                         Cursor="Hand"
                         Margin="0,0,10,0">
                     <Image x:Name="CloseImage"
-                           Source="avares://Project.Launch/src/Views/imgs/blackx.png"
+                           Source="avares://Project.Launch/src/Views/imgs/whitex.png"
                            Width="20" Height="20" Stretch="Uniform"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Opacity="1">
+                        <Image.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                            </Transitions>
+                        </Image.Transitions>
+                    </Image>
                 </Button>
             </Grid>
         </Border>
 
         <!-- 主内容区域 -->
-        <Grid Grid.Row="1"
-              Margin="20">
+        <Grid Grid.Row="1" Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="Auto" />
@@ -80,9 +110,9 @@
             <StackPanel Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Spacing="6">
+                        Spacing="12">
 
-                <!-- 头像容器 -->
+                <!-- 头像 -->
                 <Grid Width="180" Height="180"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Center">
@@ -108,12 +138,32 @@
                             HorizontalAlignment="Center" />
                 </Grid>
 
+                <!-- 玩家名字 -->
                 <TextBlock x:Name="SkinStatusText"
                            Text="未登录"
                            FontSize="24"
                            FontWeight="Bold"
                            Foreground="#333"
                            HorizontalAlignment="Center" />
+
+                <!-- 两个 Lar-Miret 按钮 -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="10"
+                            Margin="0,10,0,0">
+                    <Button x:Name="LaunchGameButton"
+                            Classes="LarMiret"
+                            Width="220"
+                            Height="80">
+                        <TextBlock Text="启动游戏" FontSize="24" />
+                    </Button>
+                    <Button x:Name="ExpandButton"
+                            Classes="LarMiret"
+                            Width="45"
+                            Height="80">
+                        <TextBlock Text="^" FontSize="30" />
+                    </Button>
+                </StackPanel>
 
             </StackPanel>
         </Grid>

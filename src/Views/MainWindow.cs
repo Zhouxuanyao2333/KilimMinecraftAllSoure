@@ -48,20 +48,90 @@ namespace Project.Launch.Views
 
             Log("按钮事件绑定完成");
 
-            UpdateTitleBarGradient(_defaultStartColor, _defaultEndColor);
-            Log("初始化完成");
-
+            // ★ 根据登录状态决定标题栏样式
             if (!App.LoginCheck)
             {
+                UpdateTitleBarGradient(_defaultStartColor, _defaultEndColor);
+                Log("初始化完成（未登录，显示渐变标题栏）");
+
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     await ShowLoginDialog();
+                    // ★ 无论登录成功还是跳过，只要 LoginWindow 关闭，就渐变切到透明标题栏
+                    await SetTransparentTitleBarAsync();
+                    UpdateLoginStatus();
+                    Log("登录窗口已关闭，切换为透明标题栏");
                 });
             }
             else
             {
-                UpdateLoginStatus();
+                // 已登录启动：直接设透明标题栏（不做动画更干净）
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await SetTransparentTitleBarAsync(animate: false);
+                    UpdateLoginStatus();
+                    Log("初始化完成（已登录，显示透明标题栏）");
+                });
             }
+        }
+
+        // ★ 透明标题栏（带平滑过渡）
+        // animate = true：淡出图标 → 换色 → 淡入
+        // animate = false：直接设置，无动画（应用刚启动时使用）
+        private async Task SetTransparentTitleBarAsync(bool animate = true)
+        {
+            var titleBar = this.FindControl<Border>("TitleBarBorder");
+            var titleText = this.FindControl<TextBlock>("TitleText");
+            var minImg = this.FindControl<Image>("MinimizeImage");
+            var closeImg = this.FindControl<Image>("CloseImage");
+
+            if (!animate)
+            {
+                // 直接设置
+                if (titleBar != null) titleBar.Background = Brushes.Transparent;
+                if (titleText != null) titleText.Foreground = new SolidColorBrush(Colors.Black);
+                SetBlackIcons(minImg, closeImg);
+                return;
+            }
+
+            // 1. 图标淡出
+            if (minImg != null) minImg.Opacity = 0;
+            if (closeImg != null) closeImg.Opacity = 0;
+
+            // 2. 背景和文字颜色同时过渡（由 XAML 里的 BrushTransition 自动平滑）
+            if (titleBar != null) titleBar.Background = Brushes.Transparent;
+            if (titleText != null) titleText.Foreground = new SolidColorBrush(Colors.Black);
+
+            // 3. 等图标淡出完成（与 XAML 的 0.2s 匹配）
+            await Task.Delay(200);
+
+            // 4. 换黑色图标
+            SetBlackIcons(minImg, closeImg);
+
+            // 5. 图标淡入
+            if (minImg != null) minImg.Opacity = 1;
+            if (closeImg != null) closeImg.Opacity = 1;
+        }
+
+        // 辅助方法：把图标换成黑色版本
+        private void SetBlackIcons(Image? minImg, Image? closeImg)
+        {
+            try
+            {
+                if (minImg != null)
+                {
+                    var uri = new Uri("avares://Project.Launch/src/Views/imgs/black-.png");
+                    using var stream = AssetLoader.Open(uri);
+                    minImg.Source = new Bitmap(stream);
+                }
+                if (closeImg != null)
+                {
+                    var uri = new Uri("avares://Project.Launch/src/Views/imgs/blackx.png");
+                    using var stream = AssetLoader.Open(uri);
+                    closeImg.Source = new Bitmap(stream);
+                }
+            }
+            catch { }
         }
 
         private void UpdateLoginStatus()
@@ -70,13 +140,9 @@ namespace Project.Launch.Views
             if (statusText != null)
             {
                 if (App.IsLoggedIn && !string.IsNullOrEmpty(App.PlayerName))
-                {
                     statusText.Text = App.PlayerName;
-                }
                 else
-                {
                     statusText.Text = "未登录";
-                }
             }
         }
 
@@ -226,7 +292,7 @@ namespace Project.Launch.Views
                 try
                 {
                     var uri = new Uri(path);
-                    var stream = AssetLoader.Open(uri);
+                    using var stream = AssetLoader.Open(uri);
                     minImg.Source = new Bitmap(stream);
                 }
                 catch { }
@@ -240,7 +306,7 @@ namespace Project.Launch.Views
                 try
                 {
                     var uri = new Uri(path);
-                    var stream = AssetLoader.Open(uri);
+                    using var stream = AssetLoader.Open(uri);
                     closeImg.Source = new Bitmap(stream);
                 }
                 catch { }

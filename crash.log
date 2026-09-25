@@ -1,0 +1,22 @@
+2026-09-25 20:18:45
+
+System.InvalidCastException: Invalid property type "IBrush" for this transition: BrushTransition.
+   at Avalonia.Animation.Transition`1.OnPropertyPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+   at Avalonia.Animation.Transition`1.<>c.<.cctor>b__0_0(Transition`1 x, AvaloniaPropertyChangedEventArgs e)
+   at Avalonia.AvaloniaObjectExtensions.ClassHandlerObserver`1.OnNext(AvaloniaPropertyChangedEventArgs value)
+   at Avalonia.Reactive.LightweightObservableBase`1.PublishNext(T value)
+   at Avalonia.Reactive.LightweightSubject`1.OnNext(T value)
+   at Avalonia.AvaloniaProperty`1.NotifyChanged(AvaloniaPropertyChangedEventArgs`1 e)
+   at Avalonia.AvaloniaObject.RaisePropertyChanged[T](AvaloniaProperty`1 property, Optional`1 oldValue, BindingValue`1 newValue, BindingPriority priority, Boolean isEffectiveValue)
+   at Avalonia.AvaloniaObject.SetAndRaise[T](DirectPropertyBase`1 property, T& field, T value)
+   at Avalonia.Animation.TransitionBase.set_Property(AvaloniaProperty value)
+   at CompiledAvaloniaXaml.!AvaloniaResources.Populate:/src/Views/Styles.axaml(IServiceProvider, Styles) in C:\NoiRaceing\Project.Launch\Project.Launch\src/Views/Styles.axaml:line 173
+   at CompiledAvaloniaXaml.!AvaloniaResources.Build:/src/Views/Styles.axaml(IServiceProvider) in C:\NoiRaceing\Project.Launch\Project.Launch\src/Views/Styles.axaml:line 1
+   at Project.Launch.App.!XamlIlPopulate(IServiceProvider, App) in C:\NoiRaceing\Project.Launch\Project.Launch\App.axaml:line 9
+   at Project.Launch.App.!XamlIlPopulateTrampoline(App)
+   at Project.Launch.App.Initialize() in C:\NoiRaceing\Project.Launch\Project.Launch\App.axaml.cs:line 19
+   at Avalonia.AppBuilder.SetupUnsafe()
+   at Avalonia.AppBuilder.Setup()
+   at Avalonia.AppBuilder.SetupWithLifetime(IApplicationLifetime lifetime)
+   at Avalonia.ClassicDesktopStyleApplicationLifetimeExtensions.StartWithClassicDesktopLifetime(AppBuilder builder, String[] args, Action`1 lifetimeBuilder)
+   at Project.Launch.Program.Main(String[] args) in C:\NoiRaceing\Project.Launch\Project.Launch\Program.cs:line 17
