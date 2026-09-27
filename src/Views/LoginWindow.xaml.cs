@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -15,7 +16,7 @@ using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.Interactivity;
-using Fluid.Avalonia.Acrylic;
+using LiquidGlassAvaloniaUI;
 using Project.Launch;
 using Project.Launch.Tools;
 
@@ -32,8 +33,9 @@ namespace Project.Launch.Views
         private Button? _offlineBtn;
         private Button? _onlineBtn;
         private Button? _thirdPartyBtn;
-        private AcrylicInteractiveSurface? _slider;
+        private LiquidGlassSurface? _slider;
         private TranslateTransform? _sliderTransform;
+        private ScaleTransform? _sliderScale;
         private int _selectedIndex = 1;
 
         private Border? _titleContainer;
@@ -52,7 +54,6 @@ namespace Project.Launch.Views
         private double _animationStartX;
         private double _animationTargetX;
         private DateTime _animationStartTime;
-        private readonly TimeSpan _animationDuration = TimeSpan.FromMilliseconds(250);
 
         private const double OFFSET_OFFLINE = 0;
         private const double OFFSET_ONLINE = -10;
@@ -114,36 +115,47 @@ namespace Project.Launch.Views
             _onlineBtn = this.FindControl<Button>("OnlineLoginButton");
             _thirdPartyBtn = this.FindControl<Button>("ThirdPartyLoginButton");
 
-            _slider = this.FindControl<AcrylicInteractiveSurface>("LoginModeSlider");
+            _slider = this.FindControl<LiquidGlassSurface>("LoginModeSlider");
             if (_slider != null)
             {
-                _sliderTransform = new TranslateTransform();
-                _slider.RenderTransform = _sliderTransform;
-                _sliderTransform.X = 120;
+                var group = _slider.RenderTransform as TransformGroup;
+                if (group != null)
+                {
+                    _sliderTransform = group.Children.OfType<TranslateTransform>().FirstOrDefault();
+                    _sliderScale = group.Children.OfType<ScaleTransform>().FirstOrDefault();
+                }
+
+                if (_sliderTransform != null)
+                {
+                    _sliderTransform.X = 120;
+                    _sliderTransform.Y = 0;
+                }
+
+                if (_sliderScale != null)
+                {
+                    _sliderScale.ScaleX = 1;
+                    _sliderScale.ScaleY = 1;
+                }
             }
 
             if (_offlineBtn != null) _offlineBtn.Click += (s, e) => { _selectedIndex = 0; AnimateSliderTo(0); UpdateModeUI(0); };
             if (_onlineBtn != null) _onlineBtn.Click += (s, e) => { _selectedIndex = 1; AnimateSliderTo(1); UpdateModeUI(1); };
-            if (_thirdPartyBtn != null) _thirdPartyBtn.Click += (s, e) => { _selectedIndex = 2; AnimateSliderTo(2); UpdateModeUI(2); };
+            if (_thirdPartyBtn != null) _thirdPartyBtn.Click += (s, e) => { _selectedIndex = 2; AnimateSliderTo(2);  /* UpdateModeUI(2); */};
 
             UpdateButtonColors(1);
         }
 
-        // ★ 只对输入面板做淡出淡入，标题完全不动
         private void UpdateModeUI(int index)
         {
             if (_playerNameBox == null || _loginButton == null) return;
 
-            // 1. 淡出输入面板
             if (_inputPanel != null)
                 _inputPanel.Opacity = 0;
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                // 2. 等淡出完成
-                await Task.Delay(250);
+                await Task.Delay(AnimationConfig.InputPanelFadeDuration);
 
-                // 3. 切换内容
                 switch (index)
                 {
                     case 0:
@@ -184,15 +196,16 @@ namespace Project.Launch.Views
                         break;
                 }
 
-                // 4. 淡入输入面板
                 if (_inputPanel != null)
                     _inputPanel.Opacity = 1;
             });
         }
 
+        // ★ 滑块动画：位置（对称EaseInOut） + 缩放（高斯钟形） + 中心补偿 + 模糊（三角形曲线）
         private void AnimateSliderTo(int index)
         {
-            if (_sliderTransform == null) return;
+            if (_sliderTransform == null || _slider == null) return;
+
             double targetX = index * 120;
             double startX = _sliderTransform.X;
 
@@ -202,6 +215,13 @@ namespace Project.Launch.Views
             _animationTargetX = targetX;
             _animationStartTime = DateTime.Now;
 
+            TimeSpan duration = AnimationConfig.SliderMoveDuration;
+            double peakScale = AnimationConfig.SliderPeakScale;
+            double sigma = AnimationConfig.SliderScaleSigma;
+            double blurPeak = AnimationConfig.SliderBlurPeak;
+            double halfW = AnimationConfig.SliderWidth / 2.0;
+            double halfH = AnimationConfig.SliderHeight / 2.0;
+
             _animationTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(16)
@@ -209,20 +229,52 @@ namespace Project.Launch.Views
             _animationTimer.Tick += (s, e) =>
             {
                 var elapsed = DateTime.Now - _animationStartTime;
-                double progress = elapsed.TotalMilliseconds / _animationDuration.TotalMilliseconds;
+                double progress = elapsed.TotalMilliseconds / duration.TotalMilliseconds;
                 if (progress >= 1.0)
                 {
                     progress = 1.0;
                     _animationTimer.Stop();
                 }
 
-                double eased = 1 - Math.Pow(1 - progress, 3);
-                double currentX = _animationStartX + (_animationTargetX - _animationStartX) * eased;
-                _sliderTransform.X = currentX;
+                // ★ 位置：EaseInOut（对称，两端慢中间快）
+                double eased = progress < 0.5
+                    ? 4 * progress * progress * progress
+                    : 1 - Math.Pow(-2 * progress + 2, 3) / 2;
+
+                double baseX = _animationStartX + (_animationTargetX - _animationStartX) * eased;
+
+                // ★ 缩放：高斯钟形（对称，中间峰值）
+                double scaleCurve = Math.Exp(-Math.Pow((progress - 0.5) / sigma, 2));
+                double currentScale = 1.0 + (peakScale - 1.0) * scaleCurve;
+
+                // ★ 模糊：三角形曲线（0 → 峰值 → 0，中间线性变化）
+                double blurCurve = 1.0 - Math.Abs(progress * 2.0 - 1.0);
+                double currentBlur = blurPeak * blurCurve;
+                _slider.BlurRadius = currentBlur;
+
+                // 中心补偿（抵消左上角缩放造成的视觉偏移）
+                double xCompensation = -(currentScale - 1.0) * halfW;
+                double yCompensation = -(currentScale - 1.0) * halfH;
+
+                _sliderTransform.X = baseX + xCompensation;
+                _sliderTransform.Y = yCompensation;
+
+                if (_sliderScale != null)
+                {
+                    _sliderScale.ScaleX = currentScale;
+                    _sliderScale.ScaleY = currentScale;
+                }
 
                 if (progress >= 1.0)
                 {
                     _sliderTransform.X = _animationTargetX;
+                    _sliderTransform.Y = 0;
+                    if (_sliderScale != null)
+                    {
+                        _sliderScale.ScaleX = 1.0;
+                        _sliderScale.ScaleY = 1.0;
+                    }
+                    _slider.BlurRadius = 0;
                 }
             };
 

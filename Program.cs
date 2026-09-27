@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Avalonia;
-using Fluid.Avalonia.Acrylic;
+using Project.Launch.Tools;
 
 namespace Project.Launch
 {
@@ -10,31 +11,35 @@ namespace Project.Launch
         [STAThread]
         public static void Main(string[] args)
         {
-            // 记录启动时间，确认程序真的执行到这里
-            File.WriteAllText("program_start.log", $"程序入口执行时间: {DateTime.Now}\n");
-
             try
             {
+                LogHelper.Write(LauncherPaths.StartupLog,
+                    "程序入口执行", "Program entry executed");
+
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
-
-                File.AppendAllText("program_start.log", $"正常退出时间: {DateTime.Now}\n");
             }
             catch (Exception ex)
             {
-                // ★ 把异常写入文件
-                File.WriteAllText("crash.log", $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}\n\n{ex}");
+                try
+                {
+                    File.WriteAllText(LauncherPaths.CrashLog,
+                        $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}\n\n{ex}");
+                }
+                catch { }
+
                 Console.WriteLine("=== CRASH ===");
                 Console.WriteLine(ex.ToString());
                 Console.WriteLine("=============");
+                Console.WriteLine("崩溃日志已写入 / Crash log written: " + LauncherPaths.CrashLog);
                 Console.ReadKey();
+                Environment.Exit(1);
             }
         }
 
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .UseAcrylicPerformanceDefaults()   // ★ 新增：启用性能优化
 #if DEBUG
                 .WithDeveloperTools()
 #endif

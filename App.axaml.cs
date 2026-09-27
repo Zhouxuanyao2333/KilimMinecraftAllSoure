@@ -21,6 +21,9 @@ namespace Project.Launch
 
         public override void OnFrameworkInitializationCompleted()
         {
+            LogHelper.Write(LauncherPaths.AppLog,
+                "应用初始化开始", "Application initialization started");
+
             var account = AccountService.GetSelectedAccount();
             if (account != null)
             {
@@ -28,6 +31,10 @@ namespace Project.Launch
                 OfflineUuid = account.Uuid;
                 IsLoggedIn = true;
                 LoginCheck = AccountService.GetLoginCheck();
+
+                LogHelper.Write(LauncherPaths.AppLog,
+                    $"已加载账户: {PlayerName}，跳过登录: {LoginCheck}",
+                    $"Account loaded: {PlayerName}, LoginCheck: {LoginCheck}");
             }
             else
             {
@@ -35,6 +42,12 @@ namespace Project.Launch
                 OfflineUuid = null;
                 IsLoggedIn = false;
                 LoginCheck = false;
+
+                AccountService.SetLoginCheck(false);
+
+                LogHelper.Write(LauncherPaths.AppLog,
+                    "未找到账户，LoginCheck 设为 false",
+                    "No account found, LoginCheck set to false");
             }
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -42,6 +55,9 @@ namespace Project.Launch
                 desktop.MainWindow = new MainWindow();
                 base.OnFrameworkInitializationCompleted();
             }
+
+            LogHelper.Write(LauncherPaths.AppLog,
+                "应用初始化完成", "Application initialization complete");
         }
     }
 }

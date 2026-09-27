@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia.Base"
         xmlns:avalonia="using:Avalonia.Controls"
-        xmlns:acrylic="using:Fluid.Avalonia.Acrylic"
+        xmlns:lg="using:LiquidGlassAvaloniaUI"
         x:Class="Project.Launch.Views.LoginWindow"
         Title="登录"
         Width="800" Height="440"
@@ -26,7 +26,6 @@
                             VerticalAlignment="Center"
                             Spacing="15">
 
-                    <!-- ★ 标题 + 滑轨：完全不动，无任何过渡 -->
                     <Border x:Name="TitleContainer"
                             HorizontalAlignment="Center">
                         <Border.RenderTransform>
@@ -76,22 +75,43 @@
                                             HorizontalContentAlignment="Center"
                                             Padding="0" />
                                 </Grid>
-                                <acrylic:AcrylicInteractiveSurface x:Name="LoginModeSlider"
-                                                                   Width="114"
-                                                                   Height="36"
-                                                                   CornerRadius="6"
-                                                                   VerticalAlignment="Center"
-                                                                   HorizontalAlignment="Left"
-                                                                   Margin="3,0,3,0">
-                                    <acrylic:AcrylicInteractiveSurface.RenderTransform>
-                                        <TranslateTransform />
-                                    </acrylic:AcrylicInteractiveSurface.RenderTransform>
-                                </acrylic:AcrylicInteractiveSurface>
+
+                                <!-- ★ 液态玻璃滑块：RenderTransformOrigin 控中心，Scale 在前 Translate 在后 -->
+                                <lg:LiquidGlassSurface x:Name="LoginModeSlider"
+                                                       Width="114"
+                                                       Height="36"
+                                                       CornerRadius="6"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Left"
+                                                       Margin="3,0,3,0"
+                                                       RenderTransformOrigin="0.5,0.5"
+                                                       RefractionHeight="4"
+                                                       RefractionAmount="40"
+                                                       BlurRadius="0"
+                                                       Vibrancy="0.86"
+                                                       Brightness="0"
+                                                       Contrast="1.0"
+                                                       ExposureEv="0"
+                                                       GammaPower="1.0"
+                                                       BackdropOpacity="1.0"
+                                                       ChromaticAberration="True"
+                                                       DepthEffect="False"
+                                                       HighlightEnabled="True"
+                                                       ShadowEnabled="True"
+                                                       ShadowRadius="24"
+                                                       ShadowOffset="0,4"
+                                                       ShadowColor="#1A000000">
+                                    <lg:LiquidGlassSurface.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            <TranslateTransform />
+                                        </TransformGroup>
+                                    </lg:LiquidGlassSurface.RenderTransform>
+                                </lg:LiquidGlassSurface>
                             </Grid>
                         </StackPanel>
                     </Border>
 
-                    <!-- ★ 输入面板：只有它有 Opacity 过渡 + 固定高度 -->
                     <Border x:Name="InputPanel"
                             HorizontalAlignment="Center"
                             Height="240"

@@ -1,0 +1,147 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:media="using:Avalonia.Media">
+
+    <Styles.Resources>
+        <!-- ============================================================ -->
+        <!-- 液态玻璃参数总表 - 调参只改这里                              -->
+        <!-- ============================================================ -->
+
+        <!-- ★ 透明度控制（0~1）— 大幅降低，让窗口的亚克力透出来 -->
+        <x:Double x:Key="GlassTintOpacity">0.12</x:Double>
+        <x:Double x:Key="GlassTintOpacityHover">0.25</x:Double>
+        <x:Double x:Key="GlassTintOpacityPressed">0.35</x:Double>
+
+        <!-- ★ 边框 — 加强，让玻璃边缘有"实感" -->
+        <Thickness x:Key="GlassBorderThickness">1.2</Thickness>
+        <x:Double x:Key="GlassBorderOpacity">0.55</x:Double>
+        <x:Double x:Key="GlassBorderOpacityHover">0.75</x:Double>
+
+        <!-- ★ 圆角 -->
+        <CornerRadius x:Key="GlassCornerRadius">14</CornerRadius>
+
+        <!-- ★ 阴影 — 更柔更淡，避免显脏 -->
+        <x:Double x:Key="GlassShadowBlur">14</x:Double>
+        <x:Double x:Key="GlassShadowBlurHover">20</x:Double>
+        <x:Double x:Key="GlassShadowOffsetY">6</x:Double>
+        <x:Double x:Key="GlassShadowOffsetYHover">8</x:Double>
+        <Color x:Key="GlassShadowColor">#33000000</Color>
+        <Color x:Key="GlassShadowColorHover">#55000000</Color>
+
+        <!-- ★ 高光 — 加强，模拟玻璃反射 -->
+        <Color x:Key="GlassHighlightColor">#B3FFFFFF</Color>
+        <x:Double x:Key="GlassHighlightEndOffset">0.7</x:Double>
+
+        <!-- ============================================================ -->
+        <!-- 派生资源                                                     -->
+        <!-- ============================================================ -->
+
+        <SolidColorBrush x:Key="GlassBrush"
+                         Color="{StaticResource MiretPrimaryColor}"
+                         Opacity="{StaticResource GlassTintOpacity}" />
+        <SolidColorBrush x:Key="GlassBrushHover"
+                         Color="{StaticResource MiretHoverColor}"
+                         Opacity="{StaticResource GlassTintOpacityHover}" />
+        <SolidColorBrush x:Key="GlassBrushPressed"
+                         Color="{StaticResource MiretPressedColor}"
+                         Opacity="{StaticResource GlassTintOpacityPressed}" />
+
+        <SolidColorBrush x:Key="GlassBorderBrush"
+                         Color="White"
+                         Opacity="{StaticResource GlassBorderOpacity}" />
+        <SolidColorBrush x:Key="GlassBorderBrushHover"
+                         Color="White"
+                         Opacity="{StaticResource GlassBorderOpacityHover}" />
+
+        <media:DropShadowEffect x:Key="GlassShadow"
+                                BlurRadius="{StaticResource GlassShadowBlur}"
+                                OffsetX="0"
+                                OffsetY="{StaticResource GlassShadowOffsetY}"
+                                Color="{StaticResource GlassShadowColor}" />
+        <media:DropShadowEffect x:Key="GlassShadowHover"
+                                BlurRadius="{StaticResource GlassShadowBlurHover}"
+                                OffsetX="0"
+                                OffsetY="{StaticResource GlassShadowOffsetYHover}"
+                                Color="{StaticResource GlassShadowColorHover}" />
+
+        <LinearGradientBrush x:Key="GlassHighlight"
+                             StartPoint="0,0"
+                             EndPoint="1,1">
+            <GradientStop Color="{StaticResource GlassHighlightColor}"
+                          Offset="0.0" />
+            <GradientStop Color="#00FFFFFF"
+                          Offset="{StaticResource GlassHighlightEndOffset}" />
+        </LinearGradientBrush>
+
+        <!-- ★ 文字投影 — 让字从半透明背景中"浮"出来 -->
+        <media:DropShadowEffect x:Key="GlassTextShadow"
+                                BlurRadius="4"
+                                OffsetX="0"
+                                OffsetY="1"
+                                Color="#55000000" />
+    </Styles.Resources>
+
+    <!-- ============================================================ -->
+    <!-- 液态玻璃按钮样式                                             -->
+    <!-- ============================================================ -->
+    <Style Selector="Button.Glass">
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="Background" Value="{StaticResource GlassBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderBrush" Value="{StaticResource GlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource GlassBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadius}" />
+        <Setter Property="Effect" Value="{StaticResource GlassShadow}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="20,8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <!-- 玻璃主层 -->
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                        <!-- 左上角高光层（不阻挡鼠标） -->
+                        <Border Background="{StaticResource GlassHighlight}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                IsHitTestVisible="False" />
+                        <!-- 内容 -->
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Setter.Value>
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2" />
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 悬停 -->
+    <Style Selector="Button.Glass:pointerover">
+        <Setter Property="Background" Value="{StaticResource GlassBrushHover}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GlassBorderBrushHover}" />
+        <Setter Property="Effect" Value="{StaticResource GlassShadowHover}" />
+    </Style>
+
+    <!-- 按下 -->
+    <Style Selector="Button.Glass:pressed">
+        <Setter Property="Background" Value="{StaticResource GlassBrushPressed}" />
+        <Setter Property="Effect" Value="{StaticResource GlassShadow}" />
+    </Style>
+
+    <!-- ★ 玻璃按钮内文字：加投影，字清晰 -->
+    <Style Selector="Button.Glass TextBlock">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Effect" Value="{StaticResource GlassTextShadow}" />
+    </Style>
+</Styles>

@@ -4,9 +4,17 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <!-- ★★★ 新增：指定应用程序图标（任务栏显示） ★★★ -->
     <ApplicationIcon>src\Views\imgs\MainLogo.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <!-- ★ 排除子项目目录，避免主项目重复编译它的源文件 -->
+  <ItemGroup>
+    <Compile Remove="src\LiquidGlassAvaloniaUI\**" />
+    <AvaloniaXaml Remove="src\LiquidGlassAvaloniaUI\**" />
+    <AvaloniaResource Remove="src\LiquidGlassAvaloniaUI\**" />
+    <EmbeddedResource Remove="src\LiquidGlassAvaloniaUI\**" />
+    <None Remove="src\LiquidGlassAvaloniaUI\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- NuGet 包 -->
@@ -18,14 +26,17 @@
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Fluid.Avalonia.Acrylic" Version="1.4.0" />
+
+    <!-- 本地引用：LiquidGlassAvaloniaUI -->
+    <ProjectReference Include="src\LiquidGlassAvaloniaUI\LiquidGlassAvaloniaUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- 你的文件 -->
     <AvaloniaXaml Update="App.axaml" />
-    <AvaloniaXaml Update="src\Views\MainWindow.axaml" />
     <AvaloniaResource Include="src\Views\Styles.axaml" />
+    <AvaloniaResource Include="src\Views\Glass.axaml" />
+    <AvaloniaXaml Update="src\Views\MainWindow.axaml" />
     <AvaloniaResource Include="src\Views\imgs\blackx.png" />
     <AvaloniaResource Include="src\Views\imgs\black-.png" />
     <AvaloniaResource Include="src\Views\imgs\whitex.png" />
@@ -36,11 +47,11 @@
     <AvaloniaResource Include="src\Views\imgs\button-Start4.png" />
     <AvaloniaResource Include="src\Views\imgs\github.png" />
     <AvaloniaResource Include="src\Views\imgs\show.png" />
-    <!-- ★★★ 新增：显式将 .ico 文件作为内容包含（非必须，但推荐，方便复制到输出目录） ★★★ -->
+
     <Content Include="src\Views\imgs\MainLogo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    
+
     <Compile Update="src\Views\MainWindow.cs">
       <DependentUpon>MainWindow.axaml</DependentUpon>
     </Compile>

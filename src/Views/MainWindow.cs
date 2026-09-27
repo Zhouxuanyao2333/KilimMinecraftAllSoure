@@ -6,6 +6,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Project.Launch.Tools;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -19,24 +20,21 @@ namespace Project.Launch.Views
     {
         private readonly Color _defaultStartColor = Color.Parse("#CCFF6B9D");
         private readonly Color _defaultEndColor = Color.Parse("#CCB366FF");
-        private readonly string _logFilePath = "MainWindowLog.txt";
-        private readonly object _logLock = new object();
         private readonly HttpClient _httpClient = new HttpClient();
 
         public MainWindow()
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            try
-            {
-                if (File.Exists(_logFilePath))
-                    File.Delete(_logFilePath);
-                File.WriteAllText(_logFilePath, $"=== Kilim Launcher Log - {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===\n");
-            }
-            catch { }
 
-            Log("程序启动");
+            // 重置日志文件，写入标题行
+            LogHelper.Reset(LauncherPaths.MainWindowLog,
+                "Kilim 启动器日志", "Kilim Launcher Log");
+
+            Log("程序启动", "Program started");
+
             InitializeComponent();
-            Log("InitializeComponent 完成");
+
+            Log("InitializeComponent 完成", "InitializeComponent completed");
 
             var closeButton = this.FindControl<Button>("CloseButton");
             if (closeButton != null)
@@ -46,21 +44,25 @@ namespace Project.Launch.Views
             if (minimizeButton != null)
                 minimizeButton.Click += (s, e) => this.WindowState = WindowState.Minimized;
 
-            Log("按钮事件绑定完成");
+            Log("按钮事件绑定完成", "Button events bound");
 
             // ★ 根据登录状态决定标题栏样式
             if (!App.LoginCheck)
             {
                 UpdateTitleBarGradient(_defaultStartColor, _defaultEndColor);
-                Log("初始化完成（未登录，显示渐变标题栏）");
+                Log("初始化完成（未登录，显示渐变标题栏）",
+                    "Initialization complete (not logged in, gradient title bar)");
 
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     await ShowLoginDialog();
+
                     // ★ 无论登录成功还是跳过，只要 LoginWindow 关闭，就渐变切到透明标题栏
                     await SetTransparentTitleBarAsync();
                     UpdateLoginStatus();
-                    Log("登录窗口已关闭，切换为透明标题栏");
+
+                    Log("登录窗口已关闭，切换为透明标题栏",
+                        "Login window closed, switched to transparent title bar");
                 });
             }
             else
@@ -70,14 +72,14 @@ namespace Project.Launch.Views
                 {
                     await SetTransparentTitleBarAsync(animate: false);
                     UpdateLoginStatus();
-                    Log("初始化完成（已登录，显示透明标题栏）");
+
+                    Log("初始化完成（已登录，显示透明标题栏）",
+                        "Initialization complete (logged in, transparent title bar)");
                 });
             }
         }
 
         // ★ 透明标题栏（带平滑过渡）
-        // animate = true：淡出图标 → 换色 → 淡入
-        // animate = false：直接设置，无动画（应用刚启动时使用）
         private async Task SetTransparentTitleBarAsync(bool animate = true)
         {
             var titleBar = this.FindControl<Border>("TitleBarBorder");
@@ -87,7 +89,6 @@ namespace Project.Launch.Views
 
             if (!animate)
             {
-                // 直接设置
                 if (titleBar != null) titleBar.Background = Brushes.Transparent;
                 if (titleText != null) titleText.Foreground = new SolidColorBrush(Colors.Black);
                 SetBlackIcons(minImg, closeImg);
@@ -98,11 +99,11 @@ namespace Project.Launch.Views
             if (minImg != null) minImg.Opacity = 0;
             if (closeImg != null) closeImg.Opacity = 0;
 
-            // 2. 背景和文字颜色同时过渡（由 XAML 里的 BrushTransition 自动平滑）
+            // 2. 背景和文字颜色同时过渡
             if (titleBar != null) titleBar.Background = Brushes.Transparent;
             if (titleText != null) titleText.Foreground = new SolidColorBrush(Colors.Black);
 
-            // 3. 等图标淡出完成（与 XAML 的 0.2s 匹配）
+            // 3. 等图标淡出完成
             await Task.Delay(200);
 
             // 4. 换黑色图标
@@ -113,7 +114,6 @@ namespace Project.Launch.Views
             if (closeImg != null) closeImg.Opacity = 1;
         }
 
-        // 辅助方法：把图标换成黑色版本
         private void SetBlackIcons(Image? minImg, Image? closeImg)
         {
             try
@@ -146,16 +146,12 @@ namespace Project.Launch.Views
             }
         }
 
-        private void Log(string message)
+        /// <summary>
+        /// 写日志（中英双语）
+        /// </summary>
+        private void Log(string zh, string en)
         {
-            try
-            {
-                lock (_logLock)
-                {
-                    File.AppendAllText(_logFilePath, $"{DateTime.Now:HH:mm:ss.fff} - {message}\n");
-                }
-            }
-            catch { }
+            LogHelper.Write(LauncherPaths.MainWindowLog, zh, en);
         }
 
         private async Task ShowLoginDialog()
