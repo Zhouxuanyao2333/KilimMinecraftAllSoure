@@ -1,0 +1,17 @@
+2026-09-27 15:18:20
+
+System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the 'JsonSerializerOptions.TypeInfoResolver' property.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled()
+   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer()
+   at System.Text.Json.JsonSerializerOptions.MakeReadOnly(Boolean populateMissingResolver)
+   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions options, Type inputType)
+   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions options)
+   at System.Text.Json.JsonSerializer.Serialize[TValue](TValue value, JsonSerializerOptions options)
+   at Project.Launch.Tools.AccountService.SaveAccounts(AccountsRoot root)
+   at Project.Launch.Tools.AccountService.SetLoginCheck(Boolean value)
+   at Project.Launch.App.OnFrameworkInitializationCompleted()
+   at Avalonia.AppBuilder.SetupUnsafe()
+   at Avalonia.AppBuilder.Setup()
+   at Avalonia.AppBuilder.SetupWithLifetime(IApplicationLifetime lifetime)
+   at Avalonia.ClassicDesktopStyleApplicationLifetimeExtensions.StartWithClassicDesktopLifetime(AppBuilder builder, String[] args, Action`1 lifetimeBuilder)
+   at Project.Launch.Program.Main(String[] args)
